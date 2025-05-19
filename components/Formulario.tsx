@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Modal,
   Button,
@@ -9,7 +10,17 @@ import {
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 
-export default function Formulario({ modalVisible, nuevaCitaHandler }) {
+export default function Formulario({
+  modalVisible,
+}: {
+  modalVisible: boolean;
+}) {
+  const [paciente, setPaciente] = useState("");
+  const [propietario, setPropietario] = useState("");
+  const [email, setEmail] = useState("");
+  const [telefono, setTelefono] = useState("");
+  const [sintomas, setSintomas] = useState("");
+
   return (
     <Modal animationType="slide" visible={modalVisible}>
       <SafeAreaView style={styles.contenido}>
@@ -24,6 +35,8 @@ export default function Formulario({ modalVisible, nuevaCitaHandler }) {
               style={styles.input}
               placeholder="Nombre paciente"
               placeholderTextColor={"#666"}
+              value={paciente}
+              onChangeText={(text) => setPaciente(text)}
             />
           </View>
           <View style={styles.campo}>
@@ -32,6 +45,8 @@ export default function Formulario({ modalVisible, nuevaCitaHandler }) {
               style={styles.input}
               placeholder="Nombre propietario"
               placeholderTextColor={"#666"}
+              value={propietario}
+              onChangeText={(text) => setPropietario(text)}
             />
           </View>
           <View style={styles.campo}>
@@ -41,6 +56,8 @@ export default function Formulario({ modalVisible, nuevaCitaHandler }) {
               placeholder="Nombre paciente"
               placeholderTextColor={"#666"}
               keyboardType="email-address"
+              value={email}
+              onChangeText={(text) => setEmail(text)}
             />
           </View>
           <View style={styles.campo}>
@@ -50,14 +67,21 @@ export default function Formulario({ modalVisible, nuevaCitaHandler }) {
               placeholder="Teléfono propietario"
               placeholderTextColor={"#666"}
               keyboardType="number-pad"
+              value={telefono}
+              onChangeText={(text) => setTelefono(text)}
+              maxLength={10}
             />
           </View>
           <View style={styles.campo}>
             <Text style={styles.label}>Síntomas</Text>
             <TextInput
-              style={styles.input}
+              style={[styles.input, { height: 100 }]}
               placeholder="Síntomas"
               placeholderTextColor={"#666"}
+              multiline
+              numberOfLines={4}
+              value={sintomas}
+              onChangeText={(text) => setSintomas(text)}
             />
           </View>
         </ScrollView>
