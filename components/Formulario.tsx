@@ -8,16 +8,20 @@ import {
   View,
   ScrollView,
   Platform,
+  Pressable,
+  TextInput,
 } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
-import DateTimePicker from "@react-native-community/datetimepicker";
-// react-native-datetimepicker
+import DateTimePicker from "@react-native-community/datetimepicker"; // react-native-datetimepicker
 
-export default function Formulario({
-  modalVisible,
-}: {
+type FormularioProps = {
   modalVisible: boolean;
-}) {
+  handleCloseModal: VoidFunction;
+};
+
+export function Formulario({
+  modalVisible,
+  handleCloseModal,
+}: FormularioProps) {
   const [paciente, setPaciente] = useState("");
   const [propietario, setPropietario] = useState("");
   const [email, setEmail] = useState("");
@@ -46,6 +50,11 @@ export default function Formulario({
           <Text style={styles.titulo}>
             Nueva <Text style={styles.tituloBold}>cita</Text>
           </Text>
+          <Pressable>
+            <Text style={styles.closeBtn} onLongPress={handleCloseModal}>
+              Cerrar
+            </Text>
+          </Pressable>
 
           <View style={styles.campo}>
             <Text style={styles.label}>Nombre paciente</Text>
@@ -109,6 +118,7 @@ export default function Formulario({
             <Button
               title={fecha.toLocaleDateString()}
               onPress={() => showMode("date")}
+              color="#006C74"
             />
           </View>
 
@@ -121,9 +131,10 @@ export default function Formulario({
                 minute: "2-digit",
               })}
               onPress={() => showMode("time")}
+              color="#006C74"
             />
           </View>
-          
+
           {showPicker && (
             <DateTimePicker
               value={fecha}
@@ -132,6 +143,10 @@ export default function Formulario({
               onChange={onChange}
             />
           )}
+
+          <Pressable style={styles.btnNuevaCita}>
+            <Text style={styles.btnNuevaCitaText}>Agregar paciente</Text>
+          </Pressable>
         </ScrollView>
       </SafeAreaView>
     </Modal>
@@ -140,36 +155,61 @@ export default function Formulario({
 
 const styles = StyleSheet.create({
   contenido: {
-    backgroundColor: "#6d28d9",
+    backgroundColor: "#EAEFEE",
     flex: 1,
+    padding: 20,
+  },
+  closeBtn: {
+    textAlign: "center",
+    color: "#026B75",
+    fontSize: 20,
+    fontWeight: "600",
+    marginVertical: 20,
+    borderColor: "#026B75",
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingVertical: 5,
   },
   titulo: {
     fontSize: 30,
     fontWeight: "600",
     textAlign: "center",
     marginTop: 30,
-    color: "#fff",
+    color: "#026B75",
   },
   tituloBold: {
     fontWeight: 800,
   },
   campo: {
     marginTop: 10,
-    marginHorizontal: 30,
     marginBottom: 10,
   },
   label: {
-    color: "#FFF",
-    marginBottom: 18,
-    marginTop: 15,
-    fontSize: 20,
+    color: "#026B75",
+    marginBottom: 10,
+    marginTop: 5,
+    fontSize: 16,
     fontWeight: "600",
   },
   input: {
     backgroundColor: "#FFF",
     padding: 15,
     borderRadius: 10,
-    marginBottom: 15,
+    marginBottom: 5,
     borderColor: "red",
+    color: "#EAEFEE",
+  },
+  dateBtn: {
+    backgroundColor: "#006C74",
+  },
+  btnNuevaCita: {
+    marginVertical: 50,
+    backgroundColor: "#006C74",
+    borderRadius: 10,
+  },
+  btnNuevaCitaText: {
+    textAlign: "center",
+    color: "#fff",
+    padding: 10,
   },
 });

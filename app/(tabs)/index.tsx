@@ -1,14 +1,13 @@
 import { useState } from "react";
 import { Pressable, SafeAreaView, StyleSheet, Text } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import Formulario from "../../components/Formulario";
+import { Formulario } from "../../components/Formulario";
 
 export default function HomeScreen() {
-  const [clientes, setClientes] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const nuevaCitaHandler = () => {
-    console.log("nuevaCitaHandler clicked");
+  const handleCloseModal = () => {
+    setModalVisible(false);
   };
 
   return (
@@ -25,7 +24,7 @@ export default function HomeScreen() {
         </Pressable>
         <Formulario
           modalVisible={modalVisible}
-          nuevaCitaHandler={nuevaCitaHandler}
+          handleCloseModal={handleCloseModal}
         />
       </SafeAreaView>
     </GestureHandlerRootView>
