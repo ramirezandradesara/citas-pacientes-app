@@ -3,7 +3,17 @@ import { Pressable, SafeAreaView, StyleSheet, Text } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Formulario } from "../../components/Formulario";
 
+export type Paciente = {
+  paciente: string;
+  propietario: string;
+  email: string;
+  telefono: string;
+  sintomas: string;
+  fecha: Date;
+};
+
 export default function HomeScreen() {
+  const [pacientes, setPacientes] = useState<Paciente[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
 
   const handleCloseModal = () => {
@@ -25,6 +35,7 @@ export default function HomeScreen() {
         <Formulario
           modalVisible={modalVisible}
           handleCloseModal={handleCloseModal}
+          setPacientes={setPacientes}
         />
       </SafeAreaView>
     </GestureHandlerRootView>

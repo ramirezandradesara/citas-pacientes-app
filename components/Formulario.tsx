@@ -13,15 +13,18 @@ import {
   Alert,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker"; // react-native-datetimepicker
+import { Paciente } from "@/app/(tabs)";
 
 type FormularioProps = {
   modalVisible: boolean;
   handleCloseModal: VoidFunction;
+  setPacientes: React.Dispatch<React.SetStateAction<Paciente[]>>;
 };
 
 export function Formulario({
   modalVisible,
   handleCloseModal,
+  setPacientes,
 }: FormularioProps) {
   const [paciente, setPaciente] = useState("");
   const [propietario, setPropietario] = useState("");
@@ -50,7 +53,19 @@ export function Formulario({
         { text: "Aceptar" },
         // { text: "Ok" },
       ]);
+      return;
     }
+
+    const nuevoPaciente = {
+      paciente,
+      propietario,
+      email,
+      telefono,
+      sintomas,
+      fecha,
+    };
+
+    setPacientes((prevPacientes) => [...prevPacientes, nuevoPaciente]);
   };
 
   return (
@@ -90,7 +105,7 @@ export function Formulario({
             <Text style={styles.label}>Email</Text>
             <TextInput
               style={styles.input}
-              placeholder="Nombre paciente"
+              placeholder="Email"
               placeholderTextColor={"#666"}
               keyboardType="email-address"
               value={email}
