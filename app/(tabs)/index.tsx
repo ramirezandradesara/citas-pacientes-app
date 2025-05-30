@@ -1,9 +1,17 @@
 import { useState } from "react";
-import { Pressable, SafeAreaView, StyleSheet, Text } from "react-native";
+import {
+  Pressable,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  FlatList,
+} from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Formulario } from "../../components/Formulario";
+import PacienteCard from "@/components/PacienteCard";
 
 export type Paciente = {
+  id: string;
   paciente: string;
   propietario: string;
   email: string;
@@ -23,15 +31,25 @@ export default function HomeScreen() {
   return (
     <GestureHandlerRootView>
       <SafeAreaView style={styles.contenedor}>
-        <Text style={styles.titulo}>Hola Mundo!</Text>
-        <Text style={styles.tituloBold}>Soy Sari</Text>
-        {/* <Button onPress={() => console.log("Press")} title="Nueva cita" /> */}
+        <Text style={styles.titulo}>Administrador de citas</Text>
+        <Text style={styles.tituloBold}>Veterinaria</Text>
         <Pressable
           onPress={() => setModalVisible(true)}
           style={styles.btnNuevaCita}
         >
           <Text style={styles.btnTextoNuevaCita}>Nueva cita</Text>
         </Pressable>
+
+        {pacientes.length == 0 ? (
+          <Text style={styles.emptyState}>No hay pacientes</Text>
+        ) : (
+          <FlatList
+            data={pacientes}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => <PacienteCard item={item} />}
+          />
+        )}
+
         <Formulario
           modalVisible={modalVisible}
           handleCloseModal={handleCloseModal}
@@ -74,5 +92,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 900,
     textTransform: "uppercase",
+  },
+  emptyState: {
+    color: "white",
+    fontSize: 20,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginTop: 20,
   },
 });

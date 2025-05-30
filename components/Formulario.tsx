@@ -66,6 +66,7 @@ export function Formulario({
     }
 
     const nuevoPaciente = {
+      id: Date.now().toString(),
       paciente,
       propietario,
       email,
@@ -233,7 +234,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 5,
     borderColor: "red",
-    color: "#EAEFEE",
   },
   dateBtn: {
     backgroundColor: "#006C74",
