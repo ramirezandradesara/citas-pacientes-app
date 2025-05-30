@@ -10,6 +10,7 @@ import {
   Platform,
   Pressable,
   TextInput,
+  Alert,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker"; // react-native-datetimepicker
 
@@ -41,6 +42,15 @@ export function Formulario({
   const showMode = (currentMode: "date" | "time") => {
     setMode(currentMode);
     setShowPicker(true);
+  };
+
+  const handleCita = () => {
+    if ([paciente, propietario, email, fecha, sintomas].includes("")) {
+      Alert.alert("Error", "Todos los campos son obligatorios", [
+        { text: "Aceptar" },
+        // { text: "Ok" },
+      ]);
+    }
   };
 
   return (
@@ -144,7 +154,7 @@ export function Formulario({
             />
           )}
 
-          <Pressable style={styles.btnNuevaCita}>
+          <Pressable style={styles.btnNuevaCita} onPress={handleCita}>
             <Text style={styles.btnNuevaCitaText}>Agregar paciente</Text>
           </Pressable>
         </ScrollView>
