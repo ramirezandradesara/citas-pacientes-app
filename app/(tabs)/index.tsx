@@ -20,8 +20,20 @@ export type Paciente = {
   fecha: Date;
 };
 
+const initialPacientes: Paciente[] = [
+  {
+    id: "1",
+    paciente: "Luna",
+    propietario: "Juan Perez",
+    email: "",
+    telefono: "123456789",
+    sintomas: "Tos y fiebre",
+    fecha: new Date("2023-10-01T10:00:00"),
+  },
+];
+
 export default function HomeScreen() {
-  const [pacientes, setPacientes] = useState<Paciente[]>([]);
+  const [pacientes, setPacientes] = useState<Paciente[]>(initialPacientes);
   const [modalVisible, setModalVisible] = useState(false);
 
   const handleCloseModal = () => {
@@ -77,10 +89,10 @@ const styles = StyleSheet.create({
   tituloBold: {
     fontWeight: "bold",
     textTransform: "uppercase",
-    color: "purple",
+    color: "#026B75",
   },
   btnNuevaCita: {
-    backgroundColor: "#6D28D9",
+    backgroundColor: "#026B75",
     marginRight: 5,
     marginHorizontal: 5,
     borderRadius: 10,
