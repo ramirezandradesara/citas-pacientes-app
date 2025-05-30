@@ -47,6 +47,15 @@ export function Formulario({
     setShowPicker(true);
   };
 
+  const resetForm = () => {
+    setPaciente("");
+    setPropietario("");
+    setEmail("");
+    setTelefono("");
+    setSintomas("");
+    setFecha(new Date());
+  };
+
   const handleCita = () => {
     if ([paciente, propietario, email, fecha, sintomas].includes("")) {
       Alert.alert("Error", "Todos los campos son obligatorios", [
@@ -66,6 +75,8 @@ export function Formulario({
     };
 
     setPacientes((prevPacientes) => [...prevPacientes, nuevoPaciente]);
+    handleCloseModal();
+    resetForm();
   };
 
   return (
