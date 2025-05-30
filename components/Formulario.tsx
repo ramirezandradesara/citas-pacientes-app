@@ -7,8 +7,11 @@ import {
   StyleSheet,
   View,
   ScrollView,
+  Platform,
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
+import DateTimePicker from "@react-native-community/datetimepicker";
+// react-native-datetimepicker
 
 export default function Formulario({
   modalVisible,
@@ -20,6 +23,21 @@ export default function Formulario({
   const [email, setEmail] = useState("");
   const [telefono, setTelefono] = useState("");
   const [sintomas, setSintomas] = useState("");
+  const [fecha, setFecha] = useState(new Date());
+  const [showPicker, setShowPicker] = useState(false);
+  const [mode, setMode] = useState<"date" | "time">("date");
+
+  const onChange = (event: any, selectedDate?: Date) => {
+    setShowPicker(Platform.OS === "ios"); // en Android cierra al seleccionar
+    if (selectedDate) {
+      setFecha(selectedDate);
+    }
+  };
+
+  const showMode = (currentMode: "date" | "time") => {
+    setMode(currentMode);
+    setShowPicker(true);
+  };
 
   return (
     <Modal animationType="slide" visible={modalVisible}>
@@ -84,6 +102,36 @@ export default function Formulario({
               onChangeText={(text) => setSintomas(text)}
             />
           </View>
+
+          {/* Campo Fecha de cita */}
+          <View style={styles.campo}>
+            <Text style={styles.label}>Fecha de la cita</Text>
+            <Button
+              title={fecha.toLocaleDateString()}
+              onPress={() => showMode("date")}
+            />
+          </View>
+
+          {/* Campo Hora de cita */}
+          <View style={styles.campo}>
+            <Text style={styles.label}>Hora de la cita</Text>
+            <Button
+              title={fecha.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+              onPress={() => showMode("time")}
+            />
+          </View>
+          
+          {showPicker && (
+            <DateTimePicker
+              value={fecha}
+              mode={mode}
+              display="default"
+              onChange={onChange}
+            />
+          )}
         </ScrollView>
       </SafeAreaView>
     </Modal>
