@@ -21,6 +21,9 @@ type FormularioProps = {
   setPacientes: React.Dispatch<React.SetStateAction<Paciente[]>>;
 };
 
+// usar ImageBackground e Image
+// react-native-async-storage
+
 export function Formulario({
   modalVisible,
   handleCloseModal,
