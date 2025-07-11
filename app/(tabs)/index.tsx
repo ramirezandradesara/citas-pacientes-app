@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Pressable,
   StyleSheet,
@@ -6,6 +6,7 @@ import {
   View,
   Image,
   ScrollView as RNScrollView,
+  Animated,
 } from "react-native";
 import {
   GestureHandlerRootView,
@@ -15,37 +16,8 @@ import { Formulario } from "../../components/Formulario";
 import PacienteCard from "@/components/PacienteCard";
 import { specialties } from "@/data/specialties";
 import { products } from "@/data/products";
-
-export type Paciente = {
-  id: string;
-  paciente: string;
-  propietario: string;
-  email: string;
-  telefono: string;
-  sintomas: string;
-  fecha: Date;
-};
-
-const initialPacientes: Paciente[] = [
-  {
-    id: "1",
-    paciente: "Luna",
-    propietario: "Juan Perez",
-    email: "",
-    telefono: "123456789",
-    sintomas: "Tos y fiebre",
-    fecha: new Date("2023-10-01T10:00:00"),
-  },
-  {
-    id: "2",
-    paciente: "Luna",
-    propietario: "Juan Perez",
-    email: "",
-    telefono: "123456789",
-    sintomas: "Tos y fiebre",
-    fecha: new Date("2023-10-01T10:00:00"),
-  },
-];
+import { initialPacientes } from "@/data/initialPatients";
+import { Paciente } from "@/model/Patient";
 
 export default function HomeScreen() {
   const [pacientes, setPacientes] = useState<Paciente[]>(initialPacientes);
@@ -55,17 +27,124 @@ export default function HomeScreen() {
     setModalVisible(false);
   };
 
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const opacityAnim = useRef(new Animated.Value(0)).current;
+  const translateYAnim = useRef(new Animated.Value(-20)).current;
+  const subtitleAnim = useRef(new Animated.Value(0)).current;
+  const animatedValues = products.map(() => ({
+    opacity: new Animated.Value(0),
+    scale: new Animated.Value(0.8),
+  }));
+
+  // sequence
+  const handlePressNuevaCita = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 0.95,
+      useNativeDriver: true,
+      speed: 20,
+      bounciness: 12,
+      // friction: 10,
+      // tension: 10,
+    }).start(() => {
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        useNativeDriver: true,
+        speed: 20,
+        bounciness: 10,
+      }).start(() => {
+        setModalVisible(true);
+      });
+    });
+  };
+
+  // interpolate
+  const interpolatedOpacity = subtitleAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 1],
+  });
+
+  const interpolatedTranslateY = subtitleAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [20, 0],
+  });
+
+  useEffect(() => {
+    // parallel
+    Animated.parallel([
+      Animated.timing(opacityAnim, {
+        toValue: 1,
+        duration: 800,
+        useNativeDriver: true,
+      }),
+      Animated.timing(translateYAnim, {
+        toValue: 0,
+        duration: 800,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    Animated.timing(subtitleAnim, {
+      toValue: 1,
+      duration: 800,
+      useNativeDriver: true,
+    }).start();
+  }, []);
+
+  useEffect(() => {
+    // sequence (for each item)
+    const animations = animatedValues.map(({ opacity, scale }, index) =>
+      Animated.sequence([
+        Animated.delay(index * 100), // once the previous animation is done
+        Animated.parallel([
+          Animated.timing(opacity, {
+            toValue: 1,
+            duration: 300,
+            useNativeDriver: true,
+          }),
+          Animated.spring(scale, {
+            toValue: 1,
+            useNativeDriver: true,
+            speed: 20,
+            bounciness: 10,
+          }),
+        ]),
+      ])
+    );
+
+    Animated.stagger(80, animations).start();
+  }, []);
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <RNScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text style={styles.titulo}>Administrador de citas</Text>
+        <Animated.Text
+          style={[
+            styles.titulo,
+            {
+              opacity: opacityAnim,
+              transform: [{ translateY: translateYAnim }],
+            },
+          ]}
+        >
+          Administrador de citas
+        </Animated.Text>
 
-        <Text style={styles.subtitulo}>Nuestras especialidades</Text>
+        <Animated.Text
+          style={[
+            styles.subtitulo,
+            {
+              opacity: interpolatedOpacity,
+              transform: [{ translateY: interpolatedTranslateY }],
+            },
+          ]}
+        >
+          Nuestras especialidades
+        </Animated.Text>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           style={styles.scroll}
-          contentContainerStyle={{ paddingVertical: 16 }}
+          contentContainerStyle={{ paddingVertical: 16, marginHorizontal: 5 }}
         >
           {specialties.map((specialty) => (
             <View key={specialty.id} style={styles.card}>
@@ -81,22 +160,34 @@ export default function HomeScreen() {
 
         <Text style={styles.subtitulo}>Nuestros productos</Text>
         <View style={styles.listaProductos}>
-          {products.map((product) => (
-            <View key={product.id} style={styles.productoItem}>
-              <Image
-                source={{ uri: product.imgUrl }}
-                style={styles.imagenCard}
-              />
-            </View>
-          ))}
+          {products.map((product, index) => {
+            const animStyle = {
+              opacity: animatedValues[index].opacity,
+              transform: [{ scale: animatedValues[index].scale }],
+            };
+
+            return (
+              <Animated.View
+                key={product.id}
+                style={[styles.productoItem, animStyle]}
+              >
+                <Animated.Image
+                  source={{ uri: product.imgUrl }}
+                  style={styles.imagenCard}
+                  resizeMode="cover"
+                />
+              </Animated.View>
+            );
+          })}
         </View>
 
         <Text style={styles.subtitulo}>Veterinaria</Text>
-        <Pressable
-          onPress={() => setModalVisible(true)}
-          style={styles.btnNuevaCita}
-        >
-          <Text style={styles.btnTextoNuevaCita}>Nueva cita</Text>
+        <Pressable onPress={handlePressNuevaCita}>
+          <Animated.View
+            style={[styles.btnNuevaCita, { transform: [{ scale: scaleAnim }] }]}
+          >
+            <Text style={styles.btnTextoNuevaCita}>Nueva cita</Text>
+          </Animated.View>
         </Pressable>
         {pacientes.length === 0 ? (
           <Text style={styles.emptyState}>No hay pacientes</Text>
@@ -201,6 +292,6 @@ const styles = StyleSheet.create({
   },
   productoItem: {
     flexBasis: "49%",
-    marginBottom: 10
+    marginBottom: 10,
   },
 });
