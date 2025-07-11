@@ -14,6 +14,7 @@ import {
 import { Formulario } from "../../components/Formulario";
 import PacienteCard from "@/components/PacienteCard";
 import { specialties } from "@/data/specialties";
+import { products } from "@/data/products";
 
 export type Paciente = {
   id: string;
@@ -78,6 +79,18 @@ export default function HomeScreen() {
           ))}
         </ScrollView>
 
+        <Text style={styles.subtitulo}>Nuestros productos</Text>
+        <View style={styles.listaProductos}>
+          {products.map((product) => (
+            <View key={product.id} style={styles.productoItem}>
+              <Image
+                source={{ uri: product.imgUrl }}
+                style={styles.imagenCard}
+              />
+            </View>
+          ))}
+        </View>
+
         <Text style={styles.subtitulo}>Veterinaria</Text>
         <Pressable
           onPress={() => setModalVisible(true)}
@@ -85,7 +98,6 @@ export default function HomeScreen() {
         >
           <Text style={styles.btnTextoNuevaCita}>Nueva cita</Text>
         </Pressable>
-
         {pacientes.length === 0 ? (
           <Text style={styles.emptyState}>No hay pacientes</Text>
         ) : (
@@ -126,7 +138,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#333",
     marginBottom: 10,
-    marginTop: 20,
+    marginTop: 15,
   },
   scroll: {
     height: 170,
@@ -181,5 +193,14 @@ const styles = StyleSheet.create({
   listaPacientes: {
     gap: 12,
     paddingBottom: 20,
+  },
+  listaProductos: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+  },
+  productoItem: {
+    flexBasis: "49%",
+    marginBottom: 10
   },
 });
