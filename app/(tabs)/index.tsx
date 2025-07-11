@@ -5,10 +5,16 @@ import {
   StyleSheet,
   Text,
   FlatList,
+  View,
+  Image,
 } from "react-native";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+import {
+  GestureHandlerRootView,
+  ScrollView,
+} from "react-native-gesture-handler";
 import { Formulario } from "../../components/Formulario";
 import PacienteCard from "@/components/PacienteCard";
+import { specialties } from "@/data/specialties";
 
 export type Paciente = {
   id: string;
@@ -44,7 +50,26 @@ export default function HomeScreen() {
     <GestureHandlerRootView>
       <SafeAreaView style={styles.contenedor}>
         <Text style={styles.titulo}>Administrador de citas</Text>
-        <Text style={styles.tituloBold}>Veterinaria</Text>
+        <Text style={styles.subtitulo}>Nuestras especialidades</Text>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.scroll}
+          contentContainerStyle={{ paddingVertical: 16 }}
+        >
+          {specialties.map((specialty) => (
+            <View key={specialty.id} style={styles.card}>
+              <Image
+                source={{ uri: specialty.imagen }}
+                style={styles.imagenCard}
+                resizeMode="cover"
+              />
+              <Text style={styles.nombreEspecialidad}>{specialty.nombre}</Text>
+            </View>
+          ))}
+        </ScrollView>
+
+        <Text style={styles.subtitulo}>Veterinaria</Text>
         <Pressable
           onPress={() => setModalVisible(true)}
           style={styles.btnNuevaCita}
@@ -52,13 +77,14 @@ export default function HomeScreen() {
           <Text style={styles.btnTextoNuevaCita}>Nueva cita</Text>
         </Pressable>
 
-        {pacientes.length == 0 ? (
+        {pacientes.length === 0 ? (
           <Text style={styles.emptyState}>No hay pacientes</Text>
         ) : (
           <FlatList
             data={pacientes}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => <PacienteCard item={item} />}
+            contentContainerStyle={{ paddingBottom: 100 }}
           />
         )}
 
@@ -74,40 +100,67 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   contenedor: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "grey",
     flex: 1,
+    backgroundColor: "#f0f4f8",
+    paddingHorizontal: 16,
+    paddingTop: 16,
   },
   titulo: {
+    fontSize: 24,
+    fontWeight: "bold",
     textAlign: "center",
-    fontWeight: "bold",
-    textTransform: "uppercase",
-    color: "white",
+    color: "#026B75",
+    marginBottom: 10,
+    marginTop: 20,
   },
-  tituloBold: {
+  subtitulo: {
+    fontSize: 18,
     fontWeight: "bold",
-    textTransform: "uppercase",
+    color: "#333",
+    marginBottom: 10,
+    marginTop: 20,
+  },
+  scroll: {
+    height:200
+  },
+  card: {
+    marginRight: 15,
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    overflow: "hidden",
+    elevation: 2,
+    width: 160,
+  },
+  imagenCard: {
+    width: "100%",
+    height: 100,
+  },
+  nombreEspecialidad: {
+    textAlign: "center",
+    padding: 8,
+    fontWeight: "600",
+    fontSize: 14,
     color: "#026B75",
   },
   btnNuevaCita: {
     backgroundColor: "#026B75",
-    marginRight: 5,
-    marginHorizontal: 5,
     borderRadius: 10,
-    padding: 15,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    alignSelf: "center",
+    marginTop: 10,
+    marginBottom: 20,
   },
   btnTextoNuevaCita: {
     textAlign: "center",
     color: "#fff",
     fontSize: 16,
-    fontWeight: 900,
+    fontWeight: "bold",
     textTransform: "uppercase",
   },
   emptyState: {
-    color: "white",
-    fontSize: 20,
+    color: "#555",
+    fontSize: 18,
     fontWeight: "bold",
     textAlign: "center",
     marginTop: 20,
