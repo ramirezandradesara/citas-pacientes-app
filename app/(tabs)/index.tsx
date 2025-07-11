@@ -1,12 +1,11 @@
 import { useState } from "react";
 import {
   Pressable,
-  SafeAreaView,
   StyleSheet,
   Text,
-  FlatList,
   View,
   Image,
+  ScrollView as RNScrollView,
 } from "react-native";
 import {
   GestureHandlerRootView,
@@ -36,6 +35,15 @@ const initialPacientes: Paciente[] = [
     sintomas: "Tos y fiebre",
     fecha: new Date("2023-10-01T10:00:00"),
   },
+  {
+    id: "2",
+    paciente: "Luna",
+    propietario: "Juan Perez",
+    email: "",
+    telefono: "123456789",
+    sintomas: "Tos y fiebre",
+    fecha: new Date("2023-10-01T10:00:00"),
+  },
 ];
 
 export default function HomeScreen() {
@@ -47,9 +55,10 @@ export default function HomeScreen() {
   };
 
   return (
-    <GestureHandlerRootView>
-      <SafeAreaView style={styles.contenedor}>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <RNScrollView contentContainerStyle={styles.scrollContainer}>
         <Text style={styles.titulo}>Administrador de citas</Text>
+
         <Text style={styles.subtitulo}>Nuestras especialidades</Text>
         <ScrollView
           horizontal
@@ -80,12 +89,11 @@ export default function HomeScreen() {
         {pacientes.length === 0 ? (
           <Text style={styles.emptyState}>No hay pacientes</Text>
         ) : (
-          <FlatList
-            data={pacientes}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => <PacienteCard item={item} />}
-            contentContainerStyle={{ paddingBottom: 100 }}
-          />
+          <View style={styles.listaPacientes}>
+            {pacientes.map((item) => (
+              <PacienteCard key={item.id} item={item} />
+            ))}
+          </View>
         )}
 
         <Formulario
@@ -93,14 +101,14 @@ export default function HomeScreen() {
           handleCloseModal={handleCloseModal}
           setPacientes={setPacientes}
         />
-      </SafeAreaView>
+      </RNScrollView>
     </GestureHandlerRootView>
   );
 }
 
 const styles = StyleSheet.create({
-  contenedor: {
-    flex: 1,
+  scrollContainer: {
+    paddingBottom: 40,
     backgroundColor: "#f0f4f8",
     paddingHorizontal: 16,
     paddingTop: 16,
@@ -121,15 +129,20 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   scroll: {
-    height:200
+    height: 170,
   },
   card: {
     marginRight: 15,
     backgroundColor: "#fff",
     borderRadius: 12,
     overflow: "hidden",
-    elevation: 2,
+    elevation: 4,
     width: 160,
+    // Sombra iOS
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
   },
   imagenCard: {
     width: "100%",
@@ -164,5 +177,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     marginTop: 20,
+  },
+  listaPacientes: {
+    gap: 12,
+    paddingBottom: 20,
   },
 });
